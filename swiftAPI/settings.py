@@ -50,6 +50,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
+SESSION_COOKIE_HTTPONLY = True
+
 ROOT_URLCONF = 'swiftAPI.urls'
 
 TEMPLATES = [
@@ -85,8 +89,11 @@ SWIFT_AUTH_URL = 'http://192.168.134.77:8080/auth/v1.0'
 
 BASE_URL = 'http://192.168.134.77:8080/'
 
-SWIFT_USER = 'master'
+SWIFT_AUTH_VERSION = 1
 
+SWIFT_USER = 'asset:master'
+
+SWIFT_KEY = 'master'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
