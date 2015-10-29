@@ -95,6 +95,12 @@ SWIFT_USER = 'asset:master'
 
 SWIFT_KEY = 'master'
 
+JSON_OBJ = {
+    "account": "asset",
+    "user": "master",
+    "passkey": "master"
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
