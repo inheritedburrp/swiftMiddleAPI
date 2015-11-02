@@ -17,9 +17,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^index/', views.index, name='index'),
     url(r'^authenticate/', views.authenticate, name='authenticate'),
     url(r'^save/', views.save, name='save'),
-    url(r'^get/(?P<account>([a-zA-Z0-9_]+))/(?P<container>\w+)/(?P<object_name>([\w\s\d\._-]+))/',
-        views.get_obj, name='get'),
+    url(r'^get/(?P<container>\w+)/(?P<object_name>([\w\s\d\._-]+))/', views.get_obj, name='get'),
+    url(r'^delete/(?P<container>\w+)/(?P<object_name>([\w\s\d\._-]+))/', views.delete_obj, name='delete'),
 ]
