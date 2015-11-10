@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8bdf2e14-08c7-4c41-b96b-4a94059af8e1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/swiftAPI/__init__.py" afterPath="$PROJECT_DIR$/swiftAPI/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/swiftAPI/settings.py" afterPath="$PROJECT_DIR$/swiftAPI/settings.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/swiftAPI/urls.py" afterPath="$PROJECT_DIR$/swiftAPI/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/swiftAPI/views.py" afterPath="$PROJECT_DIR$/swiftAPI/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/swiftAPI/wsgi.py" afterPath="$PROJECT_DIR$/swiftAPI/wsgi.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="swiftAPI.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -43,8 +38,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/swiftAPI/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.7935285">
-              <caret line="77" column="25" selection-start-line="77" selection-start-column="25" selection-end-line="77" selection-end-column="25" />
+            <state vertical-scroll-proportion="0.94453007">
+              <caret line="85" column="65" selection-start-line="85" selection-start-column="65" selection-end-line="85" selection-end-column="65" />
               <folding>
                 <element signature="e#0#49#0" expanded="true" />
               </folding>
@@ -346,7 +341,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6050296" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4275148" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -518,8 +513,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/swiftAPI/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7935285">
-          <caret line="77" column="25" selection-start-line="77" selection-start-column="25" selection-end-line="77" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.94453007">
+          <caret line="85" column="65" selection-start-line="85" selection-start-column="65" selection-end-line="85" selection-end-column="65" />
           <folding>
             <element signature="e#0#49#0" expanded="true" />
           </folding>
