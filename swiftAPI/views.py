@@ -7,7 +7,6 @@ from .import settings
 import json
 import Image
 import uuid
-import traceback
 import os
 
 account_key = 'account'
@@ -37,7 +36,7 @@ def authenticate(request):
         else:
             return HttpResponse('Method Not Allowed', status=405)
     except swiftException.ClientException as e:
-        return HttpResponse(e.message, status=e.http_status)
+        return HttpResponse(e.message, status=500)
     except exceptions.KeyError as e:
         return HttpResponse('JSON object key error: '+e, status=400)
     except exceptions.ValueError:
@@ -51,66 +50,80 @@ def save(request):
     temp_name = ''
     try:
         if request.method == 'POST':
+            if not request.session.get('storage_url') and not request.session.get('auth_token'):
+                return HttpResponse('Please Contact your administrator', status=401, reason='Unauthorized:'
+                                                                                            ' session data not found')
             py_dict = {}
             if not request.FILES:
                 return HttpResponse('No file/s found to save', status=400)
             for filename, accepted_file in request.FILES.iteritems():
-                print filename
-                print request.FILES
-                print type(request.FILES)
-                name = request.FILES[filename].name
-                file_type, file_ext = accepted_file.content_type.split('/')
-                storage_url = request.session.get('storage_url')
-                auth_token = request.session.get('auth_token')
-                with open('temp', 'w+') as file:
-                    file.writelines(accepted_file.readlines())
-                if file_type == 'image':
-                    print file_type
-                    temp_name = 'file.thumbnail.'+file_ext
-                    im = Image.open('temp')
-                    unique_id_image = uuid.uuid1()
-                    unique_id_thumb = uuid.uuid1()
-                    with open('temp', 'r+') as file:
-                        client.put_object(storage_url, auth_token, image_container, str(unique_id_image), file)
-                    im.thumbnail(thumbnail_size, Image.ANTIALIAS)
-                    im.save(temp_name)
-                    with open(temp_name, 'r') as thumb_file:
-                        client.put_object(storage_url, auth_token, image_container, str(unique_id_thumb), thumb_file)
-                    image_url = str(unique_id_image)
-                    print image_url
-                    thumb_url = str(unique_id_thumb)
-                    py_dict[name] = {'image_key': image_url, 'thumb_key': thumb_url}
-            print py_dict
+                try:
+                    name = request.FILES[filename].name
+                    file_type, file_ext = accepted_file.content_type.split('/')
+                    storage_url = request.session.get('storage_url')
+                    auth_token = request.session.get('auth_token')
+                    with open('temp', 'w+') as file:
+                        file.writelines(accepted_file.readlines())
+                    if file_type == 'image':
+                        temp_name = 'file.thumbnail.'+file_ext
+                        try:
+                            im = Image.open('temp')
+                            unique_id_image = uuid.uuid1()
+                            unique_id_thumb = uuid.uuid1()
+                            with open('temp', 'r+') as file:
+                                client.put_object(storage_url, auth_token, image_container, str(unique_id_image), file)
+                            im.thumbnail(thumbnail_size, Image.ANTIALIAS)
+                            im.save(temp_name)
+                            with open(temp_name, 'r') as thumb_file:
+                                client.put_object(storage_url, auth_token, image_container, str(unique_id_thumb), thumb_file)
+                            image_url = str(unique_id_image)
+                            thumb_url = str(unique_id_thumb)
+                            py_dict[name] = {'image_key': image_url, 'thumb_key': thumb_url}
+                        except IOError:
+                            py_dict[name] = {'error': 'invalid file'}
+                finally:
+                    if os.path.exists(temp_name):
+                        os.remove(temp_name)
+                    if os.path.exists('temp'):
+                        os.remove('temp')
             return JsonResponse(py_dict)
         else:
             return HttpResponse('Method Not Allowed', status=405)
     except swiftException.ClientException as e:
         return HttpResponse(e.message, status=401)
-    except Exception as e:
-        if e.message == 'cannot identify image file':
-            return HttpResponse('Image file corrupt or not a valid image file', status=400)
-    finally:
-        if os.path.exists(temp_name):
-            os.remove(temp_name)
-        if os.path.exists('temp'):
-            os.remove('temp')
+    # except Exception as e:
+    #     if e.message == 'cannot identify image file':
+    #         return HttpResponse('Image file corrupt or not a valid image file', status=400)
 
 
 def get_obj(request, container, object_name):
-    if request.method == 'GET':
-        storage_url = request.session.get('storage_url')
-        print storage_url
-        auth_token = request.session.get('auth_token')
-        print auth_token
-        obj_headers, obj = client.get_object(storage_url, auth_token, container, object_name)
-
-        return HttpResponse(obj)
+    try:
+        if request.method == 'GET':
+            if not request.session.get('storage_url') and not request.session.get('auth_token'):
+                return HttpResponse('Please Contact your administrator', status=401, reason='Unauthorized:'
+                                                                                            ' session data not found')
+            storage_url = request.session.get('storage_url')
+            auth_token = request.session.get('auth_token')
+            obj_headers, obj = client.get_object(storage_url, auth_token, container, object_name)
+            print object_name
+            return HttpResponse(obj)
+        else:
+            return HttpResponse('Method Not Allowed', status=405)
+    except swiftException.ClientException as e:
+        return HttpResponse('Please Contact Your Administrator', status=e.http_status, reason=e.http_reason)
+    except Exception as e:
+        return HttpResponse(e.message, status=500)
 
 
 @csrf_exempt
 def delete_obj(request, container, object_name):
     if request.method == 'DELETE':
+        pydict = dict()
+        obj = {'deleted': 'yes'}
         storage_url = request.session.get('storage_url')
         auth_token = request.session.get('auth_token')
-        client.delete_object(storage_url, auth_token, container, object_name)
-        return HttpResponse(object_name)
+        client.post_object(storage_url, auth_token, container, object_name, headers=obj, response_dict=pydict)
+        print pydict
+        return JsonResponse(pydict)
+    else:
+        return HttpResponse('Method Not Allowed', status=405)
