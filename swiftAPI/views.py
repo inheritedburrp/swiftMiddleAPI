@@ -48,12 +48,13 @@ def authenticate(request):
 @csrf_exempt
 def save(request):
     temp_name = ''
+    resp_dict = dict()
+    py_dict = {}
     try:
         if request.method == 'POST':
             if not request.session.get('storage_url') and not request.session.get('auth_token'):
                 return HttpResponse('Please Contact your administrator', status=401, reason='Unauthorized:'
                                                                                             ' session data not found')
-            py_dict = {}
             if not request.FILES:
                 return HttpResponse('No file/s found to save', status=400)
             for filename, accepted_file in request.FILES.iteritems():
@@ -68,14 +69,26 @@ def save(request):
                         temp_name = 'file.thumbnail.'+file_ext
                         try:
                             im = Image.open('temp')
+                            size = im.size
+                            im_type = im.format
                             unique_id_image = uuid.uuid1()
                             unique_id_thumb = uuid.uuid1()
+                            main_header = {'X-Object-Meta-Deleted': False, 'X-Object-Meta-Format': im_type,
+                                           'X-Object-Meta-Resolution': size}
                             with open('temp', 'r+') as file:
-                                client.put_object(storage_url, auth_token, image_container, str(unique_id_image), file)
+                                client.put_object(storage_url, auth_token, image_container, str(unique_id_image), file,
+                                                  headers=main_header)
+                            print resp_dict
                             im.thumbnail(thumbnail_size, Image.ANTIALIAS)
+                            thumb_size = im.size
                             im.save(temp_name)
+                            thumb_header = {'X-Object-Meta-Deleted': False,
+                                            'X-Object-Meta-Format': im_type,
+                                            'X-Object-Meta-Resolution': thumb_size,
+                                            'X-Object-Meta-Thumbof': unique_id_image}
                             with open(temp_name, 'r') as thumb_file:
-                                client.put_object(storage_url, auth_token, image_container, str(unique_id_thumb), thumb_file)
+                                client.put_object(storage_url, auth_token, image_container, str(unique_id_thumb),
+                                                  thumb_file, headers=thumb_header)
                             image_url = str(unique_id_image)
                             thumb_url = str(unique_id_thumb)
                             py_dict[name] = {'image_key': image_url, 'thumb_key': thumb_url}
@@ -91,9 +104,6 @@ def save(request):
             return HttpResponse('Method Not Allowed', status=405)
     except swiftException.ClientException as e:
         return HttpResponse(e.message, status=401)
-    # except Exception as e:
-    #     if e.message == 'cannot identify image file':
-    #         return HttpResponse('Image file corrupt or not a valid image file', status=400)
 
 
 def get_obj(request, container, object_name):
@@ -118,12 +128,21 @@ def get_obj(request, container, object_name):
 @csrf_exempt
 def delete_obj(request, container, object_name):
     if request.method == 'DELETE':
-        pydict = dict()
-        obj = {'deleted': 'yes'}
         storage_url = request.session.get('storage_url')
+        print storage_url
         auth_token = request.session.get('auth_token')
-        client.post_object(storage_url, auth_token, container, object_name, headers=obj, response_dict=pydict)
-        print pydict
-        return JsonResponse(pydict)
+        header = client.head_object(storage_url, auth_token, container, object_name)
+        resolution = header['x-object-meta-resolution']
+        format = header['x-object-meta-format']
+        new_header = {'X-Object-Meta-Deleted': True,
+                      'X-Object-Meta-Format': format,
+                      'X-Object-Meta-Resolution': resolution}
+
+        if 'x-object-meta-thumbof' in header:
+            thumb_of = header['x-object-meta-thumbof']
+            new_header['X-Object-Meta-Thumbof'] = thumb_of
+        client.post_object(storage_url, auth_token, container, object_name, headers=new_header)
+        returned_header = client.head_object(storage_url, auth_token, container, object_name)
+        return JsonResponse(returned_header)
     else:
         return HttpResponse('Method Not Allowed', status=405)
