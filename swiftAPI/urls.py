@@ -19,6 +19,8 @@ from . import views
 urlpatterns = [
     url(r'^authenticate/', views.authenticate, name='authenticate'),
     url(r'^save/', views.save, name='save'),
+    # url(r'^confirm/', views.save_confirm, name='confirm'),
     url(r'^get/(?P<container>\w+)/(?P<object_name>([\w\s\d\._-]+))/', views.get_obj, name='get'),
-    url(r'^delete/(?P<container>\w+)/(?P<object_name>([\w\s\d\._-]+))/', views.delete_obj, name='delete'),
+    url(r'^delete/(?P<container>\w+)/', views.delete_obj, name='delete'),
+    url(r'^getall/(?P<container>\w+)/', views.get_all, name='getall'),
 ]
