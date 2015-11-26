@@ -17,10 +17,9 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^authenticate/', views.authenticate, name='authenticate'),
-    url(r'^save/', views.save, name='save'),
-    # url(r'^confirm/', views.save_confirm, name='confirm'),
-    url(r'^get/(?P<container>\w+)/(?P<object_name>([\w\s\d\._-]+))/', views.get_obj, name='get'),
-    url(r'^delete/(?P<container>\w+)/', views.delete_obj, name='delete'),
-    url(r'^getall/(?P<container>\w+)/', views.get_all, name='getall'),
+    url(r'^authenticate/', views.authenticate, name='authenticate-user'),
+    url(r'^upload/', views.upload, name='upload-file'),
+    url(r'^get/(?P<container>\w+)/(?P<object_name>([\w\s\d\._-]+))/', views.get_obj, name='get-single-object'),
+    url(r'confirm/(?P<container>\w+)/', views.confirm),
+    url(r'^all/(?P<container>\w+)/', views.get_all, name='get-all-objects'),
 ]
