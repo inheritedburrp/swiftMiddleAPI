@@ -12,6 +12,8 @@ import os
 account_key = 'account'
 username_key = 'user'
 pass_key = 'passkey'
+storage_URL_key = 'storage_url'
+auth_token_key = 'auth_token'
 
 del_after = 172800
 
@@ -37,6 +39,9 @@ def authenticate(request):
                 pass_key]
             auth_url = settings.SWIFT_AUTH_URL
             (storage_url, auth_token) = client.get_auth(auth_url, username, password)
+            print '======================================================='
+            print "storageURL: ", storage_url, "\nauth token: ", auth_token
+            print '======================================================='
             Nstorage_url = settings.BASE_URL + storage_url.split(':8080')[1]
             request.session['auth_token'], request.session['storage_url'], request.session['username'] \
                 = auth_token, Nstorage_url, username
@@ -78,8 +83,7 @@ def upload(request):
                 try:
                     temp_name, response_dict, original_name, uid = '', {}, request.POST[filename], request.POST[filename]
                     file_type, file_ext = accepted_file.content_type.split('/')
-                    storage_url = request.session.get('storage_url')
-                    auth_token = request.session.get('auth_token')
+                    storage_url, auth_token = _get_auth_data(request.session)
                     with open('temp', 'w+') as f:
                         f.writelines(accepted_file.readlines())
                     if file_type == 'image':
@@ -128,8 +132,7 @@ def get_obj(request, container, object_name):
             if not request.session.get('storage_url') and not request.session.get('auth_token'):
                 return HttpResponse('Please Contact your administrator',
                                     status=401, reason='Unauthorized: session data not found')
-            storage_url = request.session.get('storage_url')
-            auth_token = request.session.get('auth_token')
+            storage_url, auth_token = _get_auth_data(request.session)
             obj_headers, obj = client.get_object(storage_url, auth_token, container, object_name)
             return HttpResponse(obj)
         else:
@@ -153,8 +156,7 @@ def get_all(request, container):
                 return HttpResponse('Please Contact your administrator',
                                     status=401, reason='Unauthorized: session data not found')
             response_dict = dict()
-            storage_url = request.session.get('storage_url')
-            auth_token = request.session.get('auth_token')
+            storage_url, auth_token = _get_auth_data(request.session)
             data_container = client.get_container(storage_url, auth_token, container)
             for object in data_container[1]:
                 if 'name' in object:
@@ -202,8 +204,7 @@ def confirm(request, container):
             if not request.session.get('storage_url') and not request.session.get('auth_token'):
                 return HttpResponse('Please Contact your administrator', status=401,
                                     reason='Unauthorized: session data not found')
-            storage_url = request.session.get('storage_url')
-            auth_token = request.session.get('auth_token')
+            storage_url, auth_token = _get_auth_data(request.session)
             data = json.loads(request.body)
             confirm_delete_list = data['deleted']
             confirm_save_list = data['added']
@@ -220,6 +221,10 @@ def confirm(request, container):
     except Exception as e:
         print e
         return HttpResponse("Please Contact your administrator", status=e.http_status)
+
+
+def _get_auth_data(session):
+    return session.get(storage_URL_key), session.get(auth_token_key)
 
 
 def _make_header(deleted, form, name, res, type, copy_of_id):
