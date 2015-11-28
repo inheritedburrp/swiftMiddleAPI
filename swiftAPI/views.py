@@ -81,7 +81,7 @@ def upload(request):
                 return HttpResponse('No file/s found to save', status=400)
             for filename, accepted_file in request.FILES.iteritems():
                 try:
-                    temp_name, response_dict, original_name, uid = '', {}, request.POST[filename], request.POST[filename]
+                    temp_name, response_dict, original_name, uid = '', {}, request.FILES[filename].name, request.POST[filename]
                     file_type, file_ext = accepted_file.content_type.split('/')
                     storage_url, auth_token = _get_auth_data(request.session)
                     with open('temp', 'w+') as f:
