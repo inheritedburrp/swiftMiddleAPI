@@ -132,7 +132,6 @@ def get_obj(request, container, object_name):
     :param container: container of swift where object is stored
     :param object_name: ID of object
     :return: object bytestream
-    return
     """
     try:
         if not request.session.get('storage_url') and not request.session.get('auth_token'):
