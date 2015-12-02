@@ -38,7 +38,19 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'rest_framework',
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    )
+}
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -94,9 +106,9 @@ DATABASES = {
     }
 }
 
-SWIFT_AUTH_URL = 'http://192.168.134.77:8080/auth/v1.0'
+SWIFT_AUTH_URL = 'http://192.168.134.77:8000/auth/v1.0'
 
-BASE_URL = 'http://192.168.134.77:8080'
+BASE_URL = 'http://192.168.134.77:8000'
 
 SWIFT_AUTH_VERSION = 1
 
@@ -105,9 +117,9 @@ SWIFT_USER = 'asset:master'
 SWIFT_KEY = 'master'
 
 JSON_OBJ = {
-    "account": "asset",
-    "user": "master",
-    "passkey": "master"
+    "account": "swasset",
+    "user": "swmaster",
+    "passkey": "swmaster"
 }
 
 # Internationalization
