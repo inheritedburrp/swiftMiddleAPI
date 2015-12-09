@@ -63,14 +63,6 @@ def authenticate(request):
         return Response(e, status=status.HTTP_501_NOT_IMPLEMENTED)
 
 
-# @api_view(['POST'])
-# @parser_classes((MultiPartParser, FormParser))
-# def upload(request):
-#     new_data = dict(request.data.iterlists())
-#     print new_data
-#     for filename, a_file in new_data.iteritems():
-#         print a_file
-
 @api_view(['POST'])
 @parser_classes((MultiPartParser, FormParser))
 def upload(request):
