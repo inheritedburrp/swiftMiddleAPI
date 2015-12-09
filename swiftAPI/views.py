@@ -44,7 +44,7 @@ def authenticate(request):
             pass_key]
         auth_url = settings.SWIFT_AUTH_URL
         (storage_url, auth_token) = client.get_auth(auth_url, username, password)
-        storage_url = settings.BASE_URL + storage_url.split(':8080')[1]                                      #JUGAAD
+        storage_url = settings.BASE_URL + storage_url.split(':8080')[1]
         request.session['auth_token'], request.session['storage_url'], request.session['username'] \
             = auth_token, storage_url, username
         return Response({'username': username, 'auth_token': auth_token, 'storage_url': storage_url},
